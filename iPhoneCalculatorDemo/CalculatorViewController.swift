@@ -67,13 +67,13 @@ class CalculatorViewController: UIViewController {
         }
        
         if sender.tag == 11 {   // =
-            calculation()
+           
             
-//            if performingMath == true {
-//                calculation()
-//                previousNumber = 0
-//            }
-//
+            if performingMath == true {
+                calculation()
+                previousNumber = 0
+            }
+
         }
         
         if sender.tag == 12 {  // +
@@ -90,6 +90,7 @@ class CalculatorViewController: UIViewController {
             previousNumber = numberOnScreen
             performingMath = false
             isPointCalulate = false
+            isNegative = false
             operation = .add
             print("+")
         }
@@ -107,6 +108,7 @@ class CalculatorViewController: UIViewController {
             previousNumber = numberOnScreen
             performingMath = false
             isPointCalulate = false
+            isNegative = false
             operation = .subtract
             print("-")
         }
@@ -116,6 +118,7 @@ class CalculatorViewController: UIViewController {
                 calculationSymbolBackgroundColorAnimate(sender, int: sender.tag)
                 checkAnyCalculateSymbolIsExist()
                 operationCurrentTitle = "x"
+                isNegative = false
             }
             
             if performingMath == true {
@@ -124,6 +127,7 @@ class CalculatorViewController: UIViewController {
             previousNumber = numberOnScreen
             performingMath = false
             isPointCalulate = false
+            isNegative = false
             operation = .multiply
             print("x")
         }
@@ -141,6 +145,7 @@ class CalculatorViewController: UIViewController {
             previousNumber = numberOnScreen
             performingMath = false
             isPointCalulate = false
+            isNegative = false
             operation = .divide
             print("÷")
         }
@@ -178,8 +183,9 @@ class CalculatorViewController: UIViewController {
             operation = .none
             isPointCalulate = false
             performingMath = false
+            isNegative = false
             specialSymbolBackgroundColorAnimate(sender)
-           equalButton.setTitle("AC", for: .normal)
+            equalButton.setTitle("AC", for: .normal)
             checkAnyCalculateSymbolIsExist()
         }
         
@@ -198,6 +204,10 @@ class CalculatorViewController: UIViewController {
             equalButton.setTitle("C", for: .normal)
             if performingMath == false{
                 showLabel.text = String(sender.tag)
+                
+                if isNegative == true {
+                    showLabel.text = "-\(sender.tag)"
+                }
                 performingMath = true
                 numberOnScreen = Double(showLabel.text!)!
             }else{
@@ -206,8 +216,7 @@ class CalculatorViewController: UIViewController {
                 }
                 showLabel.text = (showLabel.text)! + String(sender.tag)
                 numberOnScreen = Double(showLabel.text!)!
-                
-                
+            
             }
             
             print(numberOnScreen)
@@ -306,7 +315,7 @@ class CalculatorViewController: UIViewController {
              sender.backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
         }
         let animatorTwo = UIViewPropertyAnimator(duration: 0.3, curve: .linear) {
-            sender.backgroundColor = #colorLiteral(red: 0.4341813624, green: 0.442956984, blue: 0.4732919335, alpha: 1)
+            sender.backgroundColor = #colorLiteral(red: 0.3179988265, green: 0.3179988265, blue: 0.3179988265, alpha: 1)
         }
         animator.addCompletion { _ in
             animatorTwo.startAnimation()
@@ -324,7 +333,7 @@ class CalculatorViewController: UIViewController {
         }
         otherAnimator.startAnimation()
         let otherAnimatorTwo = UIViewPropertyAnimator(duration: 0.3, curve: .linear) {
-            sender.backgroundColor = #colorLiteral(red: 0.7952535152, green: 0.7952535152, blue: 0.7952535152, alpha: 1)
+            sender.backgroundColor = #colorLiteral(red: 0.5723067522, green: 0.5723067522, blue: 0.5723067522, alpha: 1)
         }
         otherAnimator.addCompletion { _ in
             otherAnimatorTwo.startAnimation()

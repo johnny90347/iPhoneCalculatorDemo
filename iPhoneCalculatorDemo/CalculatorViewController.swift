@@ -25,7 +25,7 @@ class CalculatorViewController: UIViewController {
     var isPointCalulate = false       //小數點的使用,一次畫面只有一個.
     var isNegative = false            //是負數
     var operation:OperationType = .none
-    var operationCurrentTitle:String = ""
+    var operationCurrentTitle:String = ""   //目前正在使用的運算符號 ""代表沒有運算
     
     
     @IBOutlet weak var showLabel: UILabel!       //顯示畫面
@@ -50,8 +50,12 @@ class CalculatorViewController: UIViewController {
     //計算按鈕群
     @IBAction func CalculateButtonPressed(_ sender: UIButton) {
         
-        if sender.tag == 10 && isPointCalulate == false {     //小數點符號
+        if sender.tag == 10{  //小數點
             numberButtonBackgroundColorAnimate(sender)
+        }
+        
+        if sender.tag == 10 && isPointCalulate == false {     //小數點符號使用
+            
             
             if performingMath == false {
                 showLabel.text = "0" + "."
@@ -63,13 +67,14 @@ class CalculatorViewController: UIViewController {
         }
        
         if sender.tag == 11 {   // =
-
-            if performingMath == true {
-                calculation()
-                previousNumber = 0
-            }
+            calculation()
+            
+//            if performingMath == true {
+//                calculation()
+//                previousNumber = 0
+//            }
+//
         }
-        
         
         if sender.tag == 12 {  // +
             if operationCurrentTitle != "+" {
@@ -77,8 +82,7 @@ class CalculatorViewController: UIViewController {
                 checkAnyCalculateSymbolIsExist()
                 operationCurrentTitle = "+"
             }
-            
-            
+        
             if performingMath == true {
                 calculation()
                 
@@ -87,8 +91,6 @@ class CalculatorViewController: UIViewController {
             performingMath = false
             isPointCalulate = false
             operation = .add
-            
-            
             print("+")
         }
         
@@ -178,6 +180,7 @@ class CalculatorViewController: UIViewController {
             performingMath = false
             specialSymbolBackgroundColorAnimate(sender)
            equalButton.setTitle("AC", for: .normal)
+            checkAnyCalculateSymbolIsExist()
         }
         
         
@@ -198,9 +201,12 @@ class CalculatorViewController: UIViewController {
                 performingMath = true
                 numberOnScreen = Double(showLabel.text!)!
             }else{
+                if showLabel.text!.count >= 9 {  //能輸入的數字只能小於9位數
+                    break
+                }
                 showLabel.text = (showLabel.text)! + String(sender.tag)
                 numberOnScreen = Double(showLabel.text!)!
-                transferNumberToString(form: numberOnScreen)
+                
                 
             }
             
@@ -326,6 +332,26 @@ class CalculatorViewController: UIViewController {
         
     }
     
+    //按下計算符號 閃一下 的動畫 (用在已經
+    func calculationSymbolFlashAnimate(_ sender: UIButton){
+        
+        
+        let otherAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .linear) {
+            sender.backgroundColor = #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)
+        }
+        otherAnimator.startAnimation()
+        let otherAnimatorTwo = UIViewPropertyAnimator(duration: 0.3, curve: .linear) {
+            sender.backgroundColor = #colorLiteral(red: 1, green: 0.5764705882, blue: 0, alpha: 1)
+        }
+        otherAnimator.addCompletion { _ in
+            otherAnimatorTwo.startAnimation()
+        }
+        
+    }
+    
+    
+    
+    // + - x ÷ 的背景色變白色
     func calculationSymbolBackgroundColorAnimate(_ sender: UIButton, int:Int){
         
         let animator = UIViewPropertyAnimator(duration: 0.3, curve: .linear) {
@@ -339,7 +365,7 @@ class CalculatorViewController: UIViewController {
         animator.startAnimation()
         
     }
-    //回覆背景色
+    //+ - x ÷ 的背景色變橘色
     func calculationSymbolOriginColorAnimate(button: UIButton){
         let animator = UIViewPropertyAnimator(duration: 0.3, curve: .linear) {
             button.backgroundColor = #colorLiteral(red: 1, green: 0.5764705882, blue: 0, alpha: 1)
@@ -351,5 +377,7 @@ class CalculatorViewController: UIViewController {
         animator.startAnimation()
         
     }
+    
+    
 
 }

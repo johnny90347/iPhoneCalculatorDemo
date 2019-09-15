@@ -25,6 +25,7 @@ class CalculatorViewController: UIViewController {
     var isPointCalulate = false       //小數點的使用,一次畫面只有一個.
     var isNegative = false            //是負數
     var operation:OperationType = .none
+    var operationCurrentTitle:String = ""
     
     
     @IBOutlet weak var showLabel: UILabel!       //顯示畫面
@@ -50,6 +51,7 @@ class CalculatorViewController: UIViewController {
     @IBAction func CalculateButtonPressed(_ sender: UIButton) {
         
         if sender.tag == 10 && isPointCalulate == false {     //小數點符號
+            numberButtonBackgroundColorAnimate(sender)
             
             if performingMath == false {
                 showLabel.text = "0" + "."
@@ -70,21 +72,33 @@ class CalculatorViewController: UIViewController {
         
         
         if sender.tag == 12 {  // +
+            if operationCurrentTitle != "+" {
+                calculationSymbolBackgroundColorAnimate(sender, int: sender.tag)
+                checkAnyCalculateSymbolIsExist()
+                operationCurrentTitle = "+"
+            }
+            
             
             if performingMath == true {
                 calculation()
                 
             }
-            
             previousNumber = numberOnScreen
             performingMath = false
             isPointCalulate = false
             operation = .add
             
+            
             print("+")
         }
         
         if sender.tag == 13 {  // -
+            if operationCurrentTitle != "-" {
+                calculationSymbolBackgroundColorAnimate(sender, int: sender.tag)
+                checkAnyCalculateSymbolIsExist()
+                operationCurrentTitle = "-"
+            }
+            
             if performingMath == true {
                 calculation()
             }
@@ -96,6 +110,12 @@ class CalculatorViewController: UIViewController {
         }
         
         if sender.tag == 14 {  // x
+            if operationCurrentTitle != "x" {
+                calculationSymbolBackgroundColorAnimate(sender, int: sender.tag)
+                checkAnyCalculateSymbolIsExist()
+                operationCurrentTitle = "x"
+            }
+            
             if performingMath == true {
                 calculation()
             }
@@ -106,6 +126,13 @@ class CalculatorViewController: UIViewController {
             print("x")
         }
         if sender.tag == 15 {  // ÷
+            if operationCurrentTitle != "÷" {
+                calculationSymbolBackgroundColorAnimate(sender, int: sender.tag)
+                checkAnyCalculateSymbolIsExist()
+                operationCurrentTitle = "÷"
+
+            }
+            
             if performingMath == true {
                 calculation()
             }
@@ -153,32 +180,66 @@ class CalculatorViewController: UIViewController {
            equalButton.setTitle("AC", for: .normal)
         }
         
-       
         
-    }
-    
-    
-    
-    //數字按鈕群
-    @IBAction func numberButtonPressed(_ sender: UIButton) {
-        numberButtonBackgroundColorAnimate(sender)
-        equalButton.setTitle("C", for: .normal)
-        if performingMath == false{
-            showLabel.text = String(sender.tag)
-            performingMath = true
-            numberOnScreen = Double(showLabel.text!)!
-            }else{
-            showLabel.text = (showLabel.text)! + String(sender.tag)
-            numberOnScreen = Double(showLabel.text!)!
-            transferNumberToString(form: numberOnScreen)
+        
+        
+        //數字按鈕群
+        switch sender.tag {
+        case 0...9:
             
+            if operationCurrentTitle != "" {
+                changeCalculateBackgroundColor( ChagecurrentitleTo: "")
             }
-
-        print(numberOnScreen)
+            
+            numberButtonBackgroundColorAnimate(sender)
+            equalButton.setTitle("C", for: .normal)
+            if performingMath == false{
+                showLabel.text = String(sender.tag)
+                performingMath = true
+                numberOnScreen = Double(showLabel.text!)!
+            }else{
+                showLabel.text = (showLabel.text)! + String(sender.tag)
+                numberOnScreen = Double(showLabel.text!)!
+                transferNumberToString(form: numberOnScreen)
+                
+            }
+            
+            print(numberOnScreen)
+        default:
+            break
+        }
         
     
+        
     }
     
+    func checkAnyCalculateSymbolIsExist(){
+        if operationCurrentTitle != ""{
+            for button in calculateButtons {
+                if button.currentTitle == operationCurrentTitle{
+                    calculationSymbolOriginColorAnimate(button: button)
+                }
+            }
+        }
+    }
+    
+    
+    //判斷是不是要恢復 + - x ÷ 的背景顏色
+    func changeCalculateBackgroundColor(ChagecurrentitleTo title:String){
+        
+        for button in calculateButtons {
+            if button.currentTitle == "+" ||
+                button.currentTitle == "-"  ||
+                button.currentTitle == "x"  ||
+                button.currentTitle == "÷"
+            {
+                calculationSymbolOriginColorAnimate(button: button)
+                operationCurrentTitle = title
+            }
+        }
+    }
+    
+
     
     func transferNumberToString(form number:Double){    //如果沒有小數點則呈現整數
         
@@ -278,14 +339,13 @@ class CalculatorViewController: UIViewController {
         animator.startAnimation()
         
     }
-    //沒用
-    func calculationSymbolOriginColorAnimate(_ sender: UIButton, int:Int){
+    //回覆背景色
+    func calculationSymbolOriginColorAnimate(button: UIButton){
         let animator = UIViewPropertyAnimator(duration: 0.3, curve: .linear) {
-            sender.backgroundColor = #colorLiteral(red: 1, green: 0.5764705882, blue: 0, alpha: 1)
+            button.backgroundColor = #colorLiteral(red: 1, green: 0.5764705882, blue: 0, alpha: 1)
         }
         
         animator.addAnimations({
-            let button = sender.viewWithTag(int) as! UIButton
             button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: .normal)
         }, delayFactor: 0)
         animator.startAnimation()

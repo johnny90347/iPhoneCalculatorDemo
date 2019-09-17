@@ -69,10 +69,12 @@ class CalculatorViewController: UIViewController {
         if sender.tag == 11 {   // =
            
             
-            if performingMath == true {
+            if performingMath == true{
                 calculation()
                 previousNumber = 0
+                performingMath = false
             }
+            
 
         }
         
@@ -85,8 +87,8 @@ class CalculatorViewController: UIViewController {
         
             if performingMath == true {
                 calculation()
-                
             }
+            
             previousNumber = numberOnScreen
             performingMath = false
             isPointCalulate = false
@@ -208,6 +210,7 @@ class CalculatorViewController: UIViewController {
                 if isNegative == true {
                     showLabel.text = "-\(sender.tag)"
                 }
+                
                 performingMath = true
                 numberOnScreen = Double(showLabel.text!)!
             }else{
@@ -223,9 +226,7 @@ class CalculatorViewController: UIViewController {
         default:
             break
         }
-        
-    
-        
+       
     }
     
     func checkAnyCalculateSymbolIsExist(){
